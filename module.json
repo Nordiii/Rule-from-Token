@@ -6,12 +6,10 @@
   "version": "1.0.0",
   "minimumCoreVersion": "0.5.0",
   "compatibleCoreVersion": "0.6.6",
-  "url": "https://github.com/schultzcole/FVTT-Wall-Height",
-  "manifest": "https://raw.githubusercontent.com/schultzcole/FVTT-Wall-Height/master/module.json",
-  "download": "https://github.com/schultzcole/FVTT-Wall-Height/archive/2.0.1.zip",
-  "license": "https://github.com/schultzcole/FVTT-Wall-Height/blob/2.0.1/LICENSE",
-  "readme": "https://github.com/schultzcole/FVTT-Wall-Height/blob/2.0.1/README.md",
-  "changelog": "https://github.com/schultzcole/FVTT-Wall-Height/blob/2.0.1/CHANGELOG.md",
+  "url": "https://github.com/Nordiii/DragDistance",
+  "manifest": "https://raw.githubusercontent.com/Nordiii/DragDistance/master/module.json?token=AAQFHZMDHOE6RQLMGTGSUZC7KPZFG",
+  "license": "https://github.com/Nordiii/DragDistance/LICENSE",
+  "readme": "https://github.com/Nordiii/DragDistance/README.md",
   "esmodules": [
     "scripts/drag-distance.js"
   ]
