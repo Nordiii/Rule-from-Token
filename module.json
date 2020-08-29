@@ -7,7 +7,7 @@
   "minimumCoreVersion": "0.5.0",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/DragDistance",
-  "manifest": "https://github.com/Nordiii/DragDistancemaster/module.json",
+  "manifest": "https://raw.githubusercontent.com/Nordiii/DragDistance/master/module.json?token=AAQFHZJ2FPV5E5ZAVBNYWZ27KP2PQ",
   "download": "https://github.com/Nordiii/DragDistance/archive/0.0.0.1.zip",
   "license": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1/LICENSE",
   "readme": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1/README.md",
