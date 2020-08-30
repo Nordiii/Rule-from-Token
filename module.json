@@ -13,6 +13,6 @@
   "readme": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/README.md",
   "changelog": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/CHANGELOG.md",
   "esmodules": [
-    "scripts/drag-distance.js"
+    "scripts/token-distance.js"
   ]
 }
