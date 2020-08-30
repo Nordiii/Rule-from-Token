@@ -3,15 +3,13 @@
   "title": "Rule-from-Token",
   "description": "When pushing ctrl it will start the ruler from the currently selected token",
   "author": "Nordiii",
+    "esmodules": [
+    "scripts/token-distance.js"
+  ],
   "version": "0.0.1",
-  "minimumCoreVersion": "0.6.6",
+  "minimumCoreVersion": "0.6.2",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/rulerfromtoken",
   "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/module.json",
-  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.0.1.zip",
-  "license": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1/LICENSE",
-  "readme": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1/README.md",
-  "esmodules": [
-    "scripts/token-distance.js"
-  ]
+  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.0.1.zip"
 }
