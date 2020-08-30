@@ -1,2 +1,2 @@
-import { Patch_Drag } from "./TokenHook";
-Hook.on("ready", ()=> Patch_Drag);
+import { Patch_Drag } from "./TokenHook.js";
+Hooks.on("canvasReady", ()=> Patch_Drag());
