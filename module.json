@@ -7,11 +7,11 @@
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/Rule-from-Token",
-  "manifest": "https://raw.githubusercontent.com/Nordiii/Rule-from-Token/master/module.json?token=AAQFHZJ2FPV5E5ZAVBNYWZ27KP2PQ",
-  "download": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1.zip",
-  "license": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/LICENSE",
-  "readme": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/README.md",
-  "changelog": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/CHANGELOG.md",
+  "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/module.json",
+  "download": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1.zip",
+  "license": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1/LICENSE",
+  "readme": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1/README.md",
+  "changelog": "https://github.com/Nordiii/rulerfromtoken/blob/0.0.1/CHANGELOG.md",
   "esmodules": [
     "scripts/token-distance.js"
   ]
