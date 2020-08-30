@@ -1,20 +1,30 @@
-export function Patch_Drag() {
+export function patchRuler() {
+    let ctrlPushed = false;
+    let ctrlReleased = false;
+
     const oldClear = canvas.controls.ruler.clear;
+    const oldKeyEvent = KeyboardManager.prototype.getKey;
+
+    const handleMouseMove = event => {
+        if (ctrlPushed) drawFromToken(event);
+    };
+    const handleClick = () => {
+        if (ctrlReleased) canvas.controls.ruler.clear();
+    };
+
     canvas.controls.ruler.clear = function () {
         oldClear.apply(this, arguments);
         if (ctrlReleased) {
             canvas.app.stage.removeListener('pointermove', handleMouseMove);
-            canvas.app.stage.removeListener('pointerdown', handleLeftClick);
+            canvas.app.stage.removeListener('pointerdown', handleClick);
             ctrlPushed = ctrlReleased = false;
         }
     };
-    let ctrlPushed = false;
-    let ctrlReleased = false;
-    const oldKeyEvent = KeyboardManager.prototype.getKey;
+
     KeyboardManager.prototype.getKey = function (e) {
         if (e.ctrlKey && !ctrlPushed) {
             canvas.app.stage.addListener('pointermove', handleMouseMove);
-            canvas.app.stage.addListener('pointerdown', handleLeftClick);
+            canvas.app.stage.addListener('pointerdown', handleClick);
             ctrlPushed = true;
             ctrlReleased = false;
             drawFromToken(e);
@@ -23,13 +33,7 @@ export function Patch_Drag() {
         ctrlReleased = !e.ctrlKey;
         return oldKeyEvent.apply(this, arguments);
     };
-    const handleMouseMove = event => {
-        drawFromToken(event);
-    };
 
-    const handleLeftClick = () => {
-        if (ctrlReleased) canvas.controls.ruler.clear();
-    };
 }
 
 function drawFromToken(e) {

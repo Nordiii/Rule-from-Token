@@ -1,17 +1,17 @@
 {
-  "name": "ShowDragUpgraded",
-  "title": "ShowsTheDragqueenes",
-  "description": "A simple module created as a demo for working in the Foundry Virtual Tabletop framework.",
+  "name": "rulerfromtoken",
+  "title": "Rule-from-Token",
+  "description": "When pushing ctrl it will start the ruler from the currently selected token",
   "author": "Nordiii",
-  "version": "1.0.0",
-  "minimumCoreVersion": "0.5.0",
+  "version": "0.0.1",
+  "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
-  "url": "https://github.com/Nordiii/DragDistance",
-  "manifest": "https://raw.githubusercontent.com/Nordiii/DragDistance/master/module.json?token=AAQFHZJ2FPV5E5ZAVBNYWZ27KP2PQ",
-  "download": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1.zip",
-  "license": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1/LICENSE",
-  "readme": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1/README.md",
-  "changelog": "https://github.com/Nordiii/DragDistance/blob/0.0.0.1/CHANGELOG.md",
+  "url": "https://github.com/Nordiii/Rule-from-Token",
+  "manifest": "https://raw.githubusercontent.com/Nordiii/Rule-from-Token/master/module.json?token=AAQFHZJ2FPV5E5ZAVBNYWZ27KP2PQ",
+  "download": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1.zip",
+  "license": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/LICENSE",
+  "readme": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/README.md",
+  "changelog": "https://github.com/Nordiii/Rule-from-Token/blob/0.0.1/CHANGELOG.md",
   "esmodules": [
     "scripts/drag-distance.js"
   ]
