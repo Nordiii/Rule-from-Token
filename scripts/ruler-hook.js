@@ -68,7 +68,7 @@ export function patchRuler() {
             let ns = Math.abs(ny - nx);
 
             // Linear distance for all moves
-            if (waypoints.length === i)
+            if (waypoints.length <= i)
                 return (nd + ns) * d.distance * (isDifficultTerrain ? difficultTerrainMultiplier : 1);
             return (nd + ns) * d.distance * (waypoints[i].difficultTerrain ? difficultTerrainMultiplier : 1);
         });
