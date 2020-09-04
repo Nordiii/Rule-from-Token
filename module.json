@@ -1,15 +1,15 @@
 {
   "name": "rulerfromtoken",
-  "title": "Rule-from-Token",
-  "description": "When pushing ctrl it will start the ruler from the currently selected token",
+  "title": "Ruler-from-Token",
+  "description": "When pushing ctrl it will start the ruler from the currently selected token, pressing x will toggle the difficult terrain multiplier",
   "author": "Nordiii",
     "esmodules": [
     "scripts/token-distance.js"
   ],
-  "version": "0.0.1",
-  "minimumCoreVersion": "0.6.2",
+  "version": "0.0.2",
+  "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/rulerfromtoken",
   "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/module.json",
-  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.0.1.zip"
+  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.0.2.zip"
 }
