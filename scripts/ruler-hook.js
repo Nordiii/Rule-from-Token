@@ -37,7 +37,8 @@ export function patchRuler() {
         if (activityData.ruler !== null) {
             let token = canvas.tokens.controlled['0'];
             if (token === undefined) return oldBoradcast.apply(this, arguments);
-            if (activityData.ruler.waypoints[0] === token.center) return oldBoradcast.apply(this, arguments);
+            const startPoint = activityData.ruler.waypoints[0];
+            if (!(startPoint.x === token.center.x && startPoint.y === token.center.y)) return oldBoradcast.apply(this, arguments);
 
             activityData.ruler = Object.assign({
                 difficultTerrain: waypoints,
@@ -99,17 +100,21 @@ export function patchRuler() {
     SquareGrid.prototype.measureDistances = function (segments, options = {}) {
         let currentWaypoints = null;
         let currentlyDifficult;
-
+        console.log(segments)
+        console.log(segments.length)
+        if(segments.length === 0)
+            return oldSquareDist.apply(this,arguments);
         allWaypoints.forEach(value => {
             if (value.startPoint.x === segments[0].ray.A.x && value.startPoint.y === segments[0].ray.A.y
                 && value.endPoint.x === segments[segments.length - 1].ray.B.x && value.endPoint.y === segments[segments.length - 1].ray.B.y){
-                currentWaypoints = value.difficultWaypoints;
+                currentWaypoints = value.difficultWaypoints || [];
+                console.log(currentWaypoints)
                 currentlyDifficult = value.isDifficultNow
             }
         });
         let token = canvas.tokens.controlled['0'];
         if (token !== undefined && currentWaypoints === null) {
-            if (segments.length === 0 || (segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
+            if ( (segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
                 return oldSquareDist.apply(this, arguments)
             }
         }
