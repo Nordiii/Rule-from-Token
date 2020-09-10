@@ -1,5 +1,5 @@
 class waypoint {
-    constructor( difficultMultiplier) {
+    constructor(difficultMultiplier) {
         this.difficultMultiplier = difficultMultiplier;
     }
 }
@@ -13,7 +13,7 @@ class detailedWaypointData {
     }
 }
 
-class gameSettingsData{
+class gameSettingsData {
     constructor(max, increment, interval) {
         this.max = max;
         this.incremt = increment;
@@ -24,14 +24,13 @@ class gameSettingsData{
 export function patchRuler() {
     let ctrlPushed = false;
     let ctrlReleased = false;
-    let isDifficultTerrain = false;
     let keyPushedLast = Date.now();
     let waypoints = [];
     let allWaypoints = new Map();
     let difficultTerrainMultiplier = 1;
     let gameSettings;
-    const oldClear = canvas.controls.ruler.clear;
-    const oldKeyEvent = KeyboardManager.prototype.getKey;
+
+
     const handleMouseMove = event => {
         if (ctrlPushed) drawFromToken(event, waypoints);
     };
@@ -40,40 +39,52 @@ export function patchRuler() {
         waypoints.push(new waypoint(difficultTerrainMultiplier));
     };
 
-    const oldBoradcast = game.user.broadcastActivity
+    const oldBroadcast = game.user.broadcastActivity;
     game.user.broadcastActivity = function (activityData) {
         if (activityData.ruler !== null) {
             let token = canvas.tokens.controlled['0'];
-            if (token === undefined) return oldBoradcast.apply(this, arguments);
+            if (token === undefined) return oldBroadcast.apply(this, arguments);
             const startPoint = activityData.ruler.waypoints[0];
-            if (!(startPoint.x === token.center.x && startPoint.y === token.center.y)) return oldBoradcast.apply(this, arguments);
+            if (!(startPoint.x === token.center.x && startPoint.y === token.center.y)) return oldBroadcast.apply(this, arguments);
 
             activityData.ruler = Object.assign({
                 difficultTerrain: waypoints,
                 difficultMultiplier: difficultTerrainMultiplier
             }, activityData.ruler)
         }
-        oldBoradcast.apply(this, arguments);
-    }
+        oldBroadcast.apply(this, arguments);
+    };
 
     const oldRulerUpdate = canvas.controls.updateRuler;
     canvas.controls.updateRuler = function (user, ruler) {
         if (ruler !== null)
             allWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints[0], ruler.destination, ruler.difficultTerrain, ruler.difficultMultiplier))
         oldRulerUpdate.apply(this, arguments)
-    }
+    };
 
-    const oldHexDist = HexagonalGrid.prototype.measureDistances;
-    HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
+    function getCurrentTerrainData(segments) {
         let currentWaypoints = null;
-        let currentMultiplier;
+        let currentMultiplier = 1;
         allWaypoints.forEach(value => {
             if (value.startPoint.x === segments[0].ray.A.x && value.startPoint.y === segments[0].ray.A.y
-                && value.endPoint.x === segments[segments.length - 1].ray.B.x && value.endPoint.y === segments[segments.length - 1].ray.B.y){
+                && value.endPoint.x === segments[segments.length - 1].ray.B.x && value.endPoint.y === segments[segments.length - 1].ray.B.y) {
                 currentWaypoints = value.difficultWaypoints;
                 currentMultiplier = value.difficultMultiplierNow
             }
         });
+
+        return [currentWaypoints, currentMultiplier]
+    }
+
+    const oldHexDist = HexagonalGrid.prototype.measureDistances;
+    HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
+        if (segments.length === 0)
+            return oldHexDist.apply(this, arguments);
+        let currentWaypoints = null;
+        let currentMultiplier;
+        let data = getCurrentTerrainData(segments);
+        currentWaypoints = data[0];
+        currentMultiplier = data[1];
         let token = canvas.tokens.controlled['0'];
         if (token !== undefined && currentWaypoints === null) {
             if (segments.length === 0 || (segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
@@ -81,7 +92,7 @@ export function patchRuler() {
             }
         }
 
-        if (currentWaypoints === null){
+        if (currentWaypoints === null) {
             currentWaypoints = waypoints;
             currentMultiplier = difficultTerrainMultiplier
         }
@@ -105,25 +116,22 @@ export function patchRuler() {
 
     const oldSquareDist = SquareGrid.prototype.measureDistances;
     SquareGrid.prototype.measureDistances = function (segments, options = {}) {
+        if (segments.length === 0)
+            return oldSquareDist.apply(this, arguments);
+
         let currentWaypoints = null;
         let currentMultiplier;
-        if(segments.length === 0)
-            return oldSquareDist.apply(this,arguments);
-        allWaypoints.forEach(value => {
-            if (value.startPoint.x === segments[0].ray.A.x && value.startPoint.y === segments[0].ray.A.y
-                && value.endPoint.x === segments[segments.length - 1].ray.B.x && value.endPoint.y === segments[segments.length - 1].ray.B.y){
-                currentWaypoints = value.difficultWaypoints;
-                currentMultiplier = value.difficultMultiplierNow
-            }
-        });
+        let data = getCurrentTerrainData(segments);
+        currentWaypoints = data[0];
+        currentMultiplier = data[1];
         let token = canvas.tokens.controlled['0'];
         if (token !== undefined && currentWaypoints === null) {
-            if ( (segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
+            if ((segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
                 return oldSquareDist.apply(this, arguments)
             }
         }
 
-        if (currentWaypoints === null){
+        if (currentWaypoints === null) {
             currentWaypoints = waypoints;
             currentMultiplier = difficultTerrainMultiplier
         }
@@ -144,65 +152,64 @@ export function patchRuler() {
         });
     };
 
+    const oldClear = canvas.controls.ruler.clear;
     canvas.controls.ruler.clear = function () {
         oldClear.apply(this, arguments);
         if (ctrlReleased) {
             canvas.app.stage.removeListener('pointermove', handleMouseMove);
             canvas.app.stage.removeListener('pointerdown', handleClick);
-            ctrlPushed = ctrlReleased = isDifficultTerrain = false;
+            ctrlPushed = ctrlReleased = false;
             difficultTerrainMultiplier = 1;
             keyPushedLast = Date.now();
             waypoints = [];
         }
     };
 
+    const oldKeyEvent = KeyboardManager.prototype.getKey;
     KeyboardManager.prototype.getKey = function (e) {
         if (e.ctrlKey && !ctrlPushed) {
             gameSettings = new gameSettingsData(
-                game.settings.get("rulerfromtoken","maxTerrainMultiplier"),
-                game.settings.get("rulerfromtoken","terrainMultiplierSteps"),
-                game.settings.get("rulerfromtoken","incrementSpeed")
-            )
+                game.settings.get("rulerfromtoken", "maxTerrainMultiplier"),
+                game.settings.get("rulerfromtoken", "terrainMultiplierSteps"),
+                game.settings.get("rulerfromtoken", "incrementSpeed")
+            );
             canvas.app.stage.addListener('pointermove', handleMouseMove);
             canvas.app.stage.addListener('pointerdown', handleClick);
             ctrlPushed = true;
-            ctrlReleased = false;
-            isDifficultTerrain = false;
-            keyPushedLast = Date.now();
-            waypoints = [];
             drawFromToken(e, waypoints);
         }
+
         if (e.keyCode === 88 && ctrlPushed) {
-            if (Date.now() - keyPushedLast > gameSettings.interval) {
-                // isDifficultTerrain = !isDifficultTerrain;
-                if (difficultTerrainMultiplier >= gameSettings.max)
-                    difficultTerrainMultiplier = 1;
-                else
-                    difficultTerrainMultiplier += gameSettings.incremt;
-                if (difficultTerrainMultiplier > gameSettings.max)
-                    difficultTerrainMultiplier = gameSettings.max
-                keyPushedLast = Date.now();
-                drawFromToken(e, waypoints);
-            }
+            applyMultiplier(gameSettings.incremt, e)
         }
         if (e.keyCode === 89 && ctrlPushed) {
-            if (Date.now() - keyPushedLast > gameSettings.interval) {
-                // isDifficultTerrain = !isDifficultTerrain;
-                if (difficultTerrainMultiplier <= 1)
-                    difficultTerrainMultiplier = gameSettings.max;
-                else
-                    difficultTerrainMultiplier -= gameSettings.incremt;
-                if (difficultTerrainMultiplier < 1)
-                    difficultTerrainMultiplier = 1
-                keyPushedLast = Date.now();
-                drawFromToken(e, waypoints);
-            }
+            applyMultiplier(-gameSettings.incremt, e)
         }
 
         ctrlReleased = !e.ctrlKey;
         return oldKeyEvent.apply(this, arguments);
     };
 
+
+    function applyMultiplier(value, e) {
+        if (Date.now() - keyPushedLast < gameSettings.interval)
+            return;
+
+        if (difficultTerrainMultiplier <= 1 && value < 0)
+            difficultTerrainMultiplier = gameSettings.max;
+        else if (difficultTerrainMultiplier >= gameSettings.max && value > 0)
+            difficultTerrainMultiplier = 1;
+        else {
+            difficultTerrainMultiplier += value;
+            if (difficultTerrainMultiplier < 1)
+                difficultTerrainMultiplier = 1;
+            else if (difficultTerrainMultiplier > gameSettings.max)
+                difficultTerrainMultiplier = gameSettings.max;
+        }
+
+        keyPushedLast = Date.now();
+        drawFromToken(e, waypoints);
+    }
 }
 
 function drawFromToken(e, waypoints) {
