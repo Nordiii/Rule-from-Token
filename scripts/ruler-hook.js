@@ -41,17 +41,21 @@ export function patchRuler() {
 
     const oldBroadcast = game.user.broadcastActivity;
     game.user.broadcastActivity = function (activityData) {
-        if (activityData.ruler !== null) {
-            let token = canvas.tokens.controlled['0'];
-            if (token === undefined) return oldBroadcast.apply(this, arguments);
-            const startPoint = activityData.ruler.waypoints[0];
-            if (!(startPoint.x === token.center.x && startPoint.y === token.center.y)) return oldBroadcast.apply(this, arguments);
+        if (activityData.ruler === null || activityData.ruler === undefined)
+            return oldBroadcast.apply(this, arguments);
 
-            activityData.ruler = Object.assign({
-                difficultTerrain: waypoints,
-                difficultMultiplier: difficultTerrainMultiplier
-            }, activityData.ruler)
-        }
+        let token = canvas.tokens.controlled['0'];
+        if (token === undefined) return oldBroadcast.apply(this, arguments);
+
+        let startPoint = activityData.ruler.waypoints[0];
+        if (!(startPoint.x === token.center.x && startPoint.y === token.center.y))
+            return oldBroadcast.apply(this, arguments);
+
+        activityData.ruler = Object.assign({
+            difficultTerrain: waypoints,
+            difficultMultiplier: difficultTerrainMultiplier
+        }, activityData.ruler);
+
         oldBroadcast.apply(this, arguments);
     };
 

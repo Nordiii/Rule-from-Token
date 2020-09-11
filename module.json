@@ -6,10 +6,10 @@
     "esmodules": [
     "scripts/token-distance.js"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/rulerfromtoken",
   "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/module.json",
-  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.1.0.zip"
+  "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.1.1.zip"
 }
