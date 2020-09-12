@@ -35,9 +35,21 @@ export function patchRuler() {
         if (ctrlPushed) drawFromToken(event, waypoints);
     };
     const handleClick = () => {
-        if (ctrlReleased) return canvas.controls.ruler.clear();
+        if (ctrlReleased) {
+            reset();
+            return canvas.controls.ruler.clear();
+        }
         waypoints.push(new waypoint(difficultTerrainMultiplier));
     };
+
+    function reset() {
+        canvas.app.stage.removeListener('pointermove', handleMouseMove);
+        canvas.app.stage.removeListener('pointerdown', handleClick);
+        ctrlPushed = ctrlReleased = false;
+        difficultTerrainMultiplier = 1;
+        keyPushedLast = Date.now();
+        waypoints = [];
+    }
 
     const oldBroadcast = game.user.broadcastActivity;
     game.user.broadcastActivity = function (activityData) {
@@ -59,10 +71,16 @@ export function patchRuler() {
         oldBroadcast.apply(this, arguments);
     };
 
+    const oldMoveToken = Ruler.prototype.moveToken;
+    Ruler.prototype.moveToken = function () {
+        if (ctrlReleased) reset();
+        return oldMoveToken.apply(this, arguments);
+    };
+
     const oldRulerUpdate = canvas.controls.updateRuler;
     canvas.controls.updateRuler = function (user, ruler) {
         if (ruler !== null)
-            allWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints[0], ruler.destination, ruler.difficultTerrain, ruler.difficultMultiplier))
+            allWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints[0], ruler.destination, ruler.difficultTerrain, ruler.difficultMultiplier));
         oldRulerUpdate.apply(this, arguments)
     };
 
@@ -70,6 +88,9 @@ export function patchRuler() {
         let currentWaypoints = null;
         let currentMultiplier = 1;
         allWaypoints.forEach(value => {
+            if (value.startPoint === null || value.startPoint === undefined || value.endPoint === null || value.endPoint === undefined)
+                return;
+
             if (value.startPoint.x === segments[0].ray.A.x && value.startPoint.y === segments[0].ray.A.y
                 && value.endPoint.x === segments[segments.length - 1].ray.B.x && value.endPoint.y === segments[segments.length - 1].ray.B.y) {
                 currentWaypoints = value.difficultWaypoints;
@@ -100,6 +121,8 @@ export function patchRuler() {
             currentWaypoints = waypoints;
             currentMultiplier = difficultTerrainMultiplier
         }
+        if (currentWaypoints === undefined || currentWaypoints === null)
+            return oldHexDist.apply(this, arguments);
 
         return segments.map((s, i) => {
             let r = s.ray;
@@ -116,7 +139,6 @@ export function patchRuler() {
 
         });
     };
-
 
     const oldSquareDist = SquareGrid.prototype.measureDistances;
     SquareGrid.prototype.measureDistances = function (segments, options = {}) {
@@ -139,6 +161,8 @@ export function patchRuler() {
             currentWaypoints = waypoints;
             currentMultiplier = difficultTerrainMultiplier
         }
+        if (currentWaypoints === undefined || currentWaypoints === null)
+            return oldSquareDist.apply(this, arguments);
         //Basically the original function just with difficult terrain factored in, this will probably break other modules using rulers
         const d = canvas.dimensions;
         return segments.map((s, i) => {
@@ -158,20 +182,16 @@ export function patchRuler() {
 
     const oldClear = canvas.controls.ruler.clear;
     canvas.controls.ruler.clear = function () {
+        if (ctrlReleased)
+            reset();
+
         oldClear.apply(this, arguments);
-        if (ctrlReleased) {
-            canvas.app.stage.removeListener('pointermove', handleMouseMove);
-            canvas.app.stage.removeListener('pointerdown', handleClick);
-            ctrlPushed = ctrlReleased = false;
-            difficultTerrainMultiplier = 1;
-            keyPushedLast = Date.now();
-            waypoints = [];
-        }
     };
 
     const oldKeyEvent = KeyboardManager.prototype.getKey;
     KeyboardManager.prototype.getKey = function (e) {
         if (e.ctrlKey && !ctrlPushed) {
+            reset();
             gameSettings = new gameSettingsData(
                 game.settings.get("rulerfromtoken", "maxTerrainMultiplier"),
                 game.settings.get("rulerfromtoken", "terrainMultiplierSteps"),
@@ -212,11 +232,11 @@ export function patchRuler() {
         }
 
         keyPushedLast = Date.now();
-        drawFromToken(e, waypoints);
+        drawFromToken(e, waypoints, true);
     }
 }
 
-function drawFromToken(e, waypoints) {
+function drawFromToken(e, waypoints, isTerrainUpdate = false) {
     let token = canvas.tokens.controlled['0'];
     if (token === undefined) return;
 
@@ -233,4 +253,18 @@ function drawFromToken(e, waypoints) {
 
     newEvent.data.destination = canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage);
     canvas.controls.ruler._onMouseMove(newEvent);
+
+    //Broadcast the terrain update so it does update before a mouse move event
+    if (isTerrainUpdate) {
+        let cursor = newEvent.data.destination;
+        let ruler = {
+            class: "Ruler",
+            name: "Ruler." + game.user.id,
+            waypoints: canvas.controls.ruler.waypoints,
+            destination: canvas.controls.ruler.destination,
+            _state: 2
+        };
+        let activityData = {cursor: cursor, ruler: ruler};
+        game.user.broadcastActivity(activityData);
+    }
 }
