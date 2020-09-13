@@ -1,0 +1,12 @@
+{
+  "rulerfromtoken.maxTerrainMultiplier.n": "Maximaler Multiplikator",
+  "rulerfromtoken.maxTerrainMultiplier.h": "Größtmöglicher Multiplikator, der in die Distanz eingerechnet werden kann (funktioniert nur bei den vom Modul erzeugten Linealen)",
+  "rulerfromtoken.terrainMultiplierSteps.n": "Wert um den der Multiplikator erhöht/verkleinert wird",
+  "rulerfromtoken.terrainMultiplierSteps.h": "Wert um den der Multiplikator erhöht/verkleinert wird beim drücken von x/y",
+  "rulerfromtoken.incrementSpeed.n": "Zeit zwischen registriertem drücken von x/y (Lokal)",
+  "rulerfromtoken.incrementSpeed.h": "Zeit (1 Sekunde = 1000) zwischen der erneuten Registrierung von x/y zur erhöhung/verringerung des Wertes für schwieriges Gelände",
+  "rulerfromtoken.difficultTerrainAnyRuler.n": "Aktiviere schwieriges Gelände für alle Lineale",
+  "rulerfromtoken.difficultTerrainAnyRuler.h": "Dies aktiviert den schwieriges Gelände Multiplikator für alle Lineale (Es muss weiterhin die Strg-Taste gedrückt werden)",
+  "rulerfromtoken.resetLocalData.n": "Tastenkombination zum zurücksetzen der lokaler Lineal Daten aktivieren (Lokal)",
+  "rulerfromtoken.resetLocalData.h": "Setzen Sie die lokalen Lineal Daten vom Module zurück (Tastenkombination: Alt+Umschalt+ x oder y), was die meisten Probleme beheben sollte"
+}

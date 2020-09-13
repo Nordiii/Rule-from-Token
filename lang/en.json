@@ -1,0 +1,12 @@
+{
+  "rulerfromtoken.maxTerrainMultiplier.n": "Maximal Terrain multiplier",
+  "rulerfromtoken.maxTerrainMultiplier.h": "Maximal amount which can get multiplied into the movement distance (only works with the fake rule this module creates)",
+  "rulerfromtoken.terrainMultiplierSteps.n": "Amount to increment/decrease",
+  "rulerfromtoken.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
+  "rulerfromtoken.incrementSpeed.n": "Time between registered x/y push (client)",
+  "rulerfromtoken.incrementSpeed.h": "Time (1 second = 1000) between x/y applying increment/decrease difficult terrain value",
+  "rulerfromtoken.difficultTerrainAnyRuler.n": "Enable difficult terrain for any ruler",
+  "rulerfromtoken.difficultTerrainAnyRuler.h": "This will enable difficult terrain support for all rulers (you still need to press ctrl)",
+  "rulerfromtoken.resetLocalData.n": "Enable reset local ruler data shortcut (client)",
+  "rulerfromtoken.resetLocalData.h": "Reset the local ruler data from this module (shortcut: alt+shift+ x or y) which should fix most issues"
+}

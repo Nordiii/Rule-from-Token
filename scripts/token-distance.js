@@ -2,28 +2,44 @@ import {patchRuler} from "./ruler-hook.js";
 
 Hooks.once('init', function () {
     game.settings.register('rulerfromtoken', "maxTerrainMultiplier", {
-        name: "Maximal Terrain multiplier",
-        hint: "Maximal amount which can get multiplied into the movement distance (only works with the fake rule this module creates)",
+        name: "rulerfromtoken.maxTerrainMultiplier.n",
+        hint: "rulerfromtoken.maxTerrainMultiplier.h",
         scope: "world",
         config: true,
         default: 2,
         type: Number
     });
     game.settings.register('rulerfromtoken', "terrainMultiplierSteps", {
-        name: "Amount to increment",
-        hint: "Amount to increase/decrease the current multiplier when pressing x/y",
+        name: "rulerfromtoken.terrainMultiplierSteps.n",
+        hint: "rulerfromtoken.terrainMultiplierSteps.h",
         scope: "world",
         config: true,
         default: 1,
         type: Number
     });
     game.settings.register('rulerfromtoken', "incrementSpeed", {
-        name: "Time between registered x/y push (client)",
-        hint: "Time (1 second = 1000) between x/y applying increment/decrease difficult terrain value",
+        name: "rulerfromtoken.incrementSpeed.n",
+        hint: "rulerfromtoken.incrementSpeed.h",
         scope: "client",
         config: true,
         default: 200,
         type: Number
+    });
+    game.settings.register('rulerfromtoken', "difficultTerrainAnyRuler", {
+        name: "rulerfromtoken.difficultTerrainAnyRuler.n",
+        hint: "rulerfromtoken.difficultTerrainAnyRuler.h",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+    game.settings.register('rulerfromtoken', "resetLocalData", {
+        name: "rulerfromtoken.resetLocalData.n",
+        hint: "rulerfromtoken.resetLocalData.h",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean
     });
 });
 Hooks.on("canvasReady", ()=> patchRuler());
