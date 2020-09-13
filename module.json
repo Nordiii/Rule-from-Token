@@ -10,6 +10,6 @@
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "url": "https://github.com/Nordiii/rulerfromtoken",
-  "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/module.json",
+  "manifest": "https://raw.githubusercontent.com/Nordiii/rulerfromtoken/v0.1.2/module.json",
   "download": "https://github.com/Nordiii/rulerfromtoken/archive/0.1.2.zip"
 }
