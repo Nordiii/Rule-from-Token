@@ -288,6 +288,8 @@ function drawFromToken(e, waypoints, isTerrainUpdate = false, difficultTerrainAn
 
     //Broadcast the terrain update so it does update before a mouse move event
     function broadcast(cursor) {
+        if (!game.user.hasPermission("SHOW_RULER"))
+            return;
         let ruler = {
             class: "Ruler",
             name: "Ruler." + game.user.id,
