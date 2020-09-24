@@ -29,7 +29,7 @@ Hooks.once('init', function () {
         name: "rulerfromtoken.difficultTerrainAnyRuler.n",
         hint: "rulerfromtoken.difficultTerrainAnyRuler.h",
         scope: "world",
-        config: true,
+        config: false,
         default: false,
         type: Boolean
     });
@@ -39,6 +39,22 @@ Hooks.once('init', function () {
         scope: "client",
         config: true,
         default: true,
+        type: Boolean
+    });
+    game.settings.register('rulerfromtoken', "difficultTerrainDisabled", {
+        name: "rulerfromtoken.difficultTerrainDisabled.n",
+        hint: "rulerfromtoken.difficultTerrainDisabled.h",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+    game.settings.register('rulerfromtoken', "dontShowAgain", {
+        name: "Only Show on update",
+        hint: "Only Show on update",
+        scope: "client",
+        config: false,
+        default: false,
         type: Boolean
     });
 });

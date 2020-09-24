@@ -5,6 +5,8 @@
   "rulerfromtoken.terrainMultiplierSteps.h": "Wert um den der Multiplikator erhöht/verkleinert wird beim drücken von x/y",
   "rulerfromtoken.incrementSpeed.n": "Zeit zwischen registriertem drücken von x/y (Lokal)",
   "rulerfromtoken.incrementSpeed.h": "Zeit (1 Sekunde = 1000) zwischen der erneuten Registrierung von x/y zur erhöhung/verringerung des Wertes für schwieriges Gelände",
+  "rulerfromtoken.difficultTerrainDisabled.n": "Schwieriges Gelände von diesem Modul ausschalten",
+  "rulerfromtoken.difficultTerrainDisabled.h": "Deaktivieren Sie schwieriges Gelände von diesem Modul, um das Modul 'Difficult Terrain' zu verwenden, wenn es installiert ist.",
   "rulerfromtoken.difficultTerrainAnyRuler.n": "Aktiviere schwieriges Gelände für alle Lineale",
   "rulerfromtoken.difficultTerrainAnyRuler.h": "Dies aktiviert den schwieriges Gelände Multiplikator für alle Lineale (Es muss weiterhin die Strg-Taste gedrückt werden)",
   "rulerfromtoken.resetLocalData.n": "Tastenkombination zum zurücksetzen der lokaler Lineal Daten aktivieren (Lokal)",

@@ -5,6 +5,8 @@
   "rulerfromtoken.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
   "rulerfromtoken.incrementSpeed.n": "Time between registered x/y push (client)",
   "rulerfromtoken.incrementSpeed.h": "Time (1 second = 1000) between x/y applying increment/decrease difficult terrain value",
+  "rulerfromtoken.difficultTerrainDisabled.n": "Disable difficult terrain from this module",
+  "rulerfromtoken.difficultTerrainDisabled.h": "Disable difficult terrain from this module to use the module 'Difficult Terrain' when installed",
   "rulerfromtoken.difficultTerrainAnyRuler.n": "Enable difficult terrain for any ruler",
   "rulerfromtoken.difficultTerrainAnyRuler.h": "This will enable difficult terrain support for all rulers (you still need to press ctrl)",
   "rulerfromtoken.resetLocalData.n": "Enable reset local ruler data shortcut (client)",

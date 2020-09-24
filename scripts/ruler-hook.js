@@ -14,8 +14,9 @@ class detailedWaypointData {
 }
 
 class gameSettingsData {
-    constructor(max, increment, interval, difficultTerrainAnyRuler, enableReset) {
+    constructor(max, increment, interval, difficultTerrainAnyRuler, enableReset, disableDifficultTerrain) {
         this.max = max;
+        this.disableDifficultTerrain = disableDifficultTerrain;
         this.incremt = increment;
         this.interval = interval;
         this.difficultTerrainAnyRuler = difficultTerrainAnyRuler;
@@ -31,6 +32,25 @@ export function patchRuler() {
     let allWaypoints = new Map();
     let difficultTerrainMultiplier = 1;
     let gameSettings = updateSettings();
+    if (game.user.isGM && !game.settings.get("rulerfromtoken", "dontShowAgain")) {
+        new Dialog({
+            title: 'Ruler from Token - Important',
+            content: `Ruler from Token will <b>lose</b> the <b>difficult terrain multiplier</b> on the 8.10.2020! <br><br>Please go into settings and uncheck difficult terrain in this module, use <a href="https://foundryvtt.com/packages/difficultterrain/" title="Difficult Terrain">Difficult Terrain</a> in the future (<a href="https://github.com/Nordiii/difficultterrain/releases/latest/download/module.json" title="module.json">module.json</a>).`,
+            buttons: {
+                ok: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: 'Ok',
+                },
+                dontShowAgain: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: 'Dont show again',
+                    callback: () => {
+                        game.settings.set("rulerfromtoken", "dontShowAgain", true)
+                    }
+                }
+            }
+        }).render(true);
+    }
 
     Hooks.on("closeSettingsConfig", () => gameSettings = updateSettings());
 
@@ -56,7 +76,7 @@ export function patchRuler() {
 
     const oldBroadcast = game.user.broadcastActivity;
     game.user.broadcastActivity = function (activityData) {
-        if (activityData.ruler === null || activityData.ruler === undefined)
+        if (activityData.ruler === null || activityData.ruler === undefined || gameSettings.disableDifficultTerrain)
             return oldBroadcast.apply(this, arguments);
 
         if (!gameSettings.difficultTerrainAnyRuler) {
@@ -116,88 +136,90 @@ export function patchRuler() {
         return [null, 1]
     }
 
-    const oldHexDist = HexagonalGrid.prototype.measureDistances;
-    HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
-        if (segments.length === 0)
-            return oldHexDist.apply(this, arguments);
-        let currentWaypoints = null;
-        let currentMultiplier;
-        let data = getCurrentTerrainData(segments);
-        currentWaypoints = data[0];
-        currentMultiplier = data[1];
-        let token = canvas.tokens.controlled['0'];
-        if (token == null && !gameSettings.difficultTerrainAnyRuler && currentWaypoints === null)
-            return oldHexDist.apply(this, arguments);
-        if (token !== undefined && currentWaypoints === null && !gameSettings.difficultTerrainAnyRuler) {
-            if ((segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
-                return oldHexDist.apply(this, arguments)
+    if (!gameSettings.disableDifficultTerrain) {
+        const oldHexDist = HexagonalGrid.prototype.measureDistances;
+        HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
+            if (segments.length === 0)
+                return oldHexDist.apply(this, arguments);
+            let currentWaypoints = null;
+            let currentMultiplier;
+            let data = getCurrentTerrainData(segments);
+            currentWaypoints = data[0];
+            currentMultiplier = data[1];
+            let token = canvas.tokens.controlled['0'];
+            if (token == null && !gameSettings.difficultTerrainAnyRuler && currentWaypoints === null)
+                return oldHexDist.apply(this, arguments);
+            if (token !== undefined && currentWaypoints === null && !gameSettings.difficultTerrainAnyRuler) {
+                if ((segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
+                    return oldHexDist.apply(this, arguments)
+                }
             }
-        }
 
-        if (currentWaypoints === null) {
-            currentWaypoints = waypoints;
-            currentMultiplier = difficultTerrainMultiplier
-        }
-        if (currentWaypoints === undefined || currentWaypoints === null)
-            return oldHexDist.apply(this, arguments);
-
-        return segments.map((s, i) => {
-            let r = s.ray;
-            let [r0, c0] = this.getGridPositionFromPixels(r.A.x, r.A.y);
-            let [r1, c1] = this.getGridPositionFromPixels(r.B.x, r.B.y);
-
-            // Use cube conversion to measure distance
-            let hex0 = this._offsetToCube(r0, c0);
-            let hex1 = this._offsetToCube(r1, c1);
-            let distance = this._cubeDistance(hex0, hex1);
-            if (currentWaypoints.length > i)
-                return distance * canvas.dimensions.distance * currentWaypoints[i].difficultMultiplier;
-            return distance * canvas.dimensions.distance * currentMultiplier;
-
-        });
-    };
-
-    const oldSquareDist = SquareGrid.prototype.measureDistances;
-    SquareGrid.prototype.measureDistances = function (segments, options = {}) {
-        if (segments.length === 0)
-            return oldSquareDist.apply(this, arguments);
-
-        let currentWaypoints = null;
-        let currentMultiplier;
-        let data = getCurrentTerrainData(segments);
-        currentWaypoints = data[0];
-        currentMultiplier = data[1];
-        let token = canvas.tokens.controlled['0'];
-        if (token == null && !gameSettings.difficultTerrainAnyRuler && currentWaypoints === null)
-            return oldSquareDist.apply(this, arguments);
-        if (token !== undefined && currentWaypoints === null && !gameSettings.difficultTerrainAnyRuler) {
-            if ((segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
-                return oldSquareDist.apply(this, arguments)
+            if (currentWaypoints === null) {
+                currentWaypoints = waypoints;
+                currentMultiplier = difficultTerrainMultiplier
             }
-        }
+            if (currentWaypoints === undefined || currentWaypoints === null)
+                return oldHexDist.apply(this, arguments);
 
-        if (currentWaypoints === null) {
-            currentWaypoints = waypoints;
-            currentMultiplier = difficultTerrainMultiplier
-        }
-        if (currentWaypoints === undefined || currentWaypoints === null)
-            return oldSquareDist.apply(this, arguments);
-        //Basically the original function just with difficult terrain factored in, this will probably break other modules using rulers
-        const d = canvas.dimensions;
-        return segments.map((s, i) => {
-            let r = s.ray;
-            let nx = Math.abs(Math.ceil(r.dx / d.size));
-            let ny = Math.abs(Math.ceil(r.dy / d.size));
+            return segments.map((s, i) => {
+                let r = s.ray;
+                let [r0, c0] = this.getGridPositionFromPixels(r.A.x, r.A.y);
+                let [r1, c1] = this.getGridPositionFromPixels(r.B.x, r.B.y);
 
-            // Determine the number of straight and diagonal moves
-            let nd = Math.min(nx, ny);
-            let ns = Math.abs(ny - nx);
-            // Linear distance for all moves
-            if (currentWaypoints.length > i)
-                return (nd + ns) * d.distance * currentWaypoints[i].difficultMultiplier;
-            return (nd + ns) * d.distance * currentMultiplier;
-        });
-    };
+                // Use cube conversion to measure distance
+                let hex0 = this._offsetToCube(r0, c0);
+                let hex1 = this._offsetToCube(r1, c1);
+                let distance = this._cubeDistance(hex0, hex1);
+                if (currentWaypoints.length > i)
+                    return distance * canvas.dimensions.distance * currentWaypoints[i].difficultMultiplier;
+                return distance * canvas.dimensions.distance * currentMultiplier;
+
+            });
+        };
+
+        const oldSquareDist = SquareGrid.prototype.measureDistances;
+        SquareGrid.prototype.measureDistances = function (segments, options = {}) {
+            if (segments.length === 0)
+                return oldSquareDist.apply(this, arguments);
+
+            let currentWaypoints = null;
+            let currentMultiplier;
+            let data = getCurrentTerrainData(segments);
+            currentWaypoints = data[0];
+            currentMultiplier = data[1];
+            let token = canvas.tokens.controlled['0'];
+            if (token == null && !gameSettings.difficultTerrainAnyRuler && currentWaypoints === null)
+                return oldSquareDist.apply(this, arguments);
+            if (token !== undefined && currentWaypoints === null && !gameSettings.difficultTerrainAnyRuler) {
+                if ((segments[0].ray.A.x !== token.center.x || segments[0].ray.A.y !== token.center.y)) {
+                    return oldSquareDist.apply(this, arguments)
+                }
+            }
+
+            if (currentWaypoints === null) {
+                currentWaypoints = waypoints;
+                currentMultiplier = difficultTerrainMultiplier
+            }
+            if (currentWaypoints === undefined || currentWaypoints === null)
+                return oldSquareDist.apply(this, arguments);
+            //Basically the original function just with difficult terrain factored in, this will probably break other modules using rulers
+            const d = canvas.dimensions;
+            return segments.map((s, i) => {
+                let r = s.ray;
+                let nx = Math.abs(Math.ceil(r.dx / d.size));
+                let ny = Math.abs(Math.ceil(r.dy / d.size));
+
+                // Determine the number of straight and diagonal moves
+                let nd = Math.min(nx, ny);
+                let ns = Math.abs(ny - nx);
+                // Linear distance for all moves
+                if (currentWaypoints.length > i)
+                    return (nd + ns) * d.distance * currentWaypoints[i].difficultMultiplier;
+                return (nd + ns) * d.distance * currentMultiplier;
+            });
+        };
+    }
 
     const oldClear = canvas.controls.ruler.clear;
     canvas.controls.ruler.clear = function () {
@@ -283,8 +305,7 @@ function drawFromToken(e, waypoints, isTerrainUpdate = false, difficultTerrainAn
     newEvent.data.destination = canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage);
     canvas.controls.ruler._onMouseMove(newEvent);
 
-    if (isTerrainUpdate)
-        broadcast(newEvent.data.destination);
+    broadcast(newEvent.data.destination);
 
     //Broadcast the terrain update so it does update before a mouse move event
     function broadcast(cursor) {
@@ -308,6 +329,7 @@ function updateSettings() {
         game.settings.get("rulerfromtoken", "terrainMultiplierSteps"),
         game.settings.get("rulerfromtoken", "incrementSpeed"),
         game.settings.get("rulerfromtoken", "difficultTerrainAnyRuler"),
-        game.settings.get("rulerfromtoken", "resetLocalData")
+        game.settings.get("rulerfromtoken", "resetLocalData"),
+        game.settings.get("rulerfromtoken", "difficultTerrainDisabled")
     );
 }

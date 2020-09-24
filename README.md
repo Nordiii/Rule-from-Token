@@ -9,12 +9,16 @@ It even is somewhat compatible with Show-Drag-Distance **version 2.1.4**!
 
 # Functions
 * Use ctrl to start a ruler from your selected token
+###### deprecated
 * Press X to increment the difficult terrain modifier
 * Press Y to decrease the difficult terrain modifier
 
 ![Example](https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/media/Config.PNG)
 ![Example](https://raw.githubusercontent.com/Nordiii/rulerfromtoken/master/media/Difficult%20Terrain%20v2.gif)
 # Changelog:
+#### 0.1.5
+* Prepare modul for the removal of difficult terrain (will be removed on 8.10.2020)
+
 #### 0.1.4
 * Stop broadcasting difficult terrain to other users when the player does not have the permission
 * remove media files from module download
